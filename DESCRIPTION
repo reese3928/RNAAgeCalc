@@ -1,0 +1,34 @@
+Package: RNAAgeCalc
+Type: Package
+Title: A multi-tissue transcriptional age calculator
+Version: 0.99.1
+Authors@R: c(
+    person("Xu", "Ren", 
+        email = "xuren2120@gmail.com", role = c("aut", "cre")),
+    person("Pei Fen", "Kuan", 
+        email = "peifen.kuan@stonybrook.edu", role = "aut"))
+Description: It has been shown that both DNA methylation and RNA transcription 
+    are linked to chronological age and age related diseases. Several 
+    estimators have been developed to predict human aging from DNA level and 
+    RNA level. Most of the human transcriptional age predictor are based on 
+    microarray data and limited to only a few tissues. To date, transcriptional 
+    studies on aging using RNASeq data from different human tissues is limited.
+    The aim of this package is to provide a tool for across-tissue and 
+    tissue-specific transcriptional age calculation based on GTEx RNASeq data.
+License: GPL-2
+Encoding: UTF-8
+Imports:
+    ggplot2,
+    impute,
+    AnnotationDbi,
+    org.Hs.eg.db,
+    stats
+Depends:
+    R (>= 3.5)
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat
+RoxygenNote: 6.1.0
+VignetteBuilder: knitr
+biocViews: RNASeq,GeneExpression
