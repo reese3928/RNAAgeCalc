@@ -1,6 +1,7 @@
 context("Test pred_age, makeplot")
 
 data(fpkmExample)
+library(SummarizedExperiment)
 
 test_that("Test invalid input", {
     exprdata1 = 1
@@ -30,7 +31,53 @@ test_that("Test invalid input", {
     
     expect_error(predict_age(exprdata = fpkm, exprtype = "FPKM", 
                              stype = "unknown"))
-
+    
+    se1 = 1
+    expect_error(predict_age_fromse(se = se1, exprtype = "FPKM"))
+    
+    colData = data.frame(age = c(40, 50))
+    se2 = SummarizedExperiment(assays=list(unknown=fpkm), colData=colData)
+    expect_error(predict_age_fromse(se = se2, exprtype = "FPKM"))
+    
+    se3 = SummarizedExperiment(assays=list(FPKM=fpkm), colData=colData)
+    expect_error(predict_age_fromse(se = se3, exprtype = "counts"))
+    
+    se4 = SummarizedExperiment(assays=list(counts=fpkm), colData=colData)
+    expect_error(predict_age_fromse(se = se4, exprtype = "FPKM"))
+    
+    # These are some intermediate tests when we are writing the 
+    # predict_age_fromse() function. It no longer holds once we finish writing
+    # the function. Thus, they are comment.
+    # rowData = DataFrame(bp_length = runif(nrow(fpkm)))
+    # se5 = SummarizedExperiment(assays=list(counts=fpkm), colData=colData, 
+    #                            rowData = rowData)
+    # res = predict_age_fromse(se5, tissue = NULL, exprtype="counts")
+    # expect_identical(res, rowData[["bp_length"]])
+    
+    # se5 = SummarizedExperiment(assays=list(fpkm=fpkm), colData=colData)
+    # res = predict_age_fromse(se5, tissue = NULL)
+    # expect_identical(res, data.frame(sampleid = colnames(fpkm), 
+    #                                 age = c(40, 50)))
+    
+    se5 = SummarizedExperiment(assays=list(fpkm=fpkm), colData=colData)
+    expect_error(predict_age_fromse(se = se5, exprtype = "unknown"))
+    
+    expect_error(predict_age_fromse(se = se5, exprtype = "FPKM", 
+                                    stype = "unknown"))
+    
+    res1 = predict_age(exprdata = fpkm, tissue = "brain", signature = "GTExAge", 
+                       chronage = data.frame(sampleid = colnames(fpkm), 
+                                             age = c(40, 50)))
+    res2 = predict_age_fromse(se = se5, tissue = "brain", 
+                              signature = "GTExAge")
+    expect_identical(res1, res2)
+    
+    se6 = SummarizedExperiment(assays=list(fpkm=fpkm))
+    res1 = predict_age(exprdata = fpkm, tissue = "brain", 
+                       signature = "GTExAge")
+    res2 = predict_age_fromse(se = se6, tissue = "brain", 
+                              signature = "GTExAge")
+    expect_identical(res1, res2)
 })
 
 
@@ -40,7 +87,15 @@ test_that("Test tissue, signature, idtype, and chronage arguments", {
         exprtype = "FPKM"), NA)
     expect_error(predict_age(exprdata = fpkm, exprtype = "FPKM",
         idtype = "symbole"))
-
+    
+    colData = data.frame(age = c(40, 50))
+    se1 = SummarizedExperiment(assays=list(fpkm=fpkm), colData=colData)
+    expect_error(predict_age_fromse(se = se1, exprtype = "FPKM"), NA)
+    expect_error(predict_age_fromse(se = se1, tissue = "breaste",
+                                    exprtype = "FPKM"), NA)
+    expect_error(predict_age_fromse(se = se1, exprtype = "FPKM",
+                                    idtype = "symbole"))
+    
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         signature = "unknown"))
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
@@ -49,16 +104,33 @@ test_that("Test tissue, signature, idtype, and chronage arguments", {
         tissue = "brain"),NA)
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "brain", signature = "unknown"))
+    
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+                                    signature = "unknown"))
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+                                    signature = "DESeq"),NA)
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+                                    tissue = "brain"),NA)
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL", 
+                                    tissue = "brain", signature = "unknown"))
 
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "unknown", signature = "unknown"))
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "unknown", signature = "DESeq"), NA)
+    
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+                                tissue = "unknown", signature = "DESeq"), NA)
 
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "breast"),NA)
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "unknown"),NA)
+    
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+                             tissue = "breast"),NA)
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+                             tissue = "unknown"),NA)
 
     ## test the chronage argument
     chronage = data.frame(sampleid = colnames(fpkm), age = c(30,50))
@@ -124,11 +196,9 @@ test_that("Test tissue, signature, idtype, and chronage arguments", {
     fpkm3[3,1] = NA
     expect_error(predict_age(fpkm3, "brain"),NA)
 
-
-
-
-
     ## some other tests:
+    ## These are some tests for our internal data, it has nothing to do
+    ## with the user facing functions. Since some of the code takes too long,
     ## these tests are commented in order to pass the Bioconductor check
     ## time limit
 

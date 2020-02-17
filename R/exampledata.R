@@ -9,13 +9,13 @@
 #' @keywords datasets
 NULL
 
-#' @title An example of RNASeq count data
+#' @title An example of RNASeq counts data
 #'
-#' @description An example of RNASeq count data
+#' @description An example of RNASeq counts data
 #' @docType data
 #' @name rawcount
 #' @usage rawcount
-#' @format A data frame which contains the RNASeq count data. Each row is a 
+#' @format A data frame which contains the RNASeq counts data. Each row is a 
 #' gene and each column is a sample
 #' @keywords datasets
 NULL

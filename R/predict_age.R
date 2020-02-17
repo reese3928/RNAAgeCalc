@@ -40,7 +40,7 @@
 #'   \item uterus
 #'   \item vagina
 #' }
-#' @param exprtype either "count" or "FPKM". For RPKM data, please use
+#' @param exprtype either "counts" or "FPKM". For RPKM data, please use
 #' `exprtype` = "FPKM".
 #' @param idtype a string which indicates the gene id type in `exprdata`.
 #' It should be one of "SYMBOL", "ENSEMBL", "ENTREZID" or "REFSEQ". Default is
@@ -70,10 +70,11 @@
 #'   \item Peters
 #'   \item all
 #' }
-#' @param genelength gene length in bp. The size of `genelength` should be
-#' equal to the number of rows in `rawcount`. This argument is optional. If
+#' @param genelength a vector which contains gene length in bp. 
+#' The size of `genelength` should be
+#' equal to the number of rows in `exprdata`. This argument is optional. If
 #' using `exprtype = "FPKM"`, `genelength` argument is ignored. If using
-#' `exprtype = "count"`, the raw count will be converted to FPKM. If
+#' `exprtype = "counts"`, the raw count will be converted to FPKM. If
 #' `genelength` is provided, the function will convert raw count to FPKM by the
 #' user-supplied gene length. Otherwise, gene length is obtained from the
 #' internal database.
@@ -128,7 +129,7 @@ predict_age <- function(exprdata, tissue, exprtype = "FPKM", idtype = "SYMBOL",
         stop("Duplicated gene names found in the exprdata matrix.")
     }
 
-    exprtype = match.arg(exprtype, c("count", "FPKM"))
+    exprtype = match.arg(exprtype, c("counts", "FPKM"))
     idtype = match.arg(toupper(idtype),
         c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
     stype = match.arg(tolower(stype), c("all", "caucasian"))
@@ -214,7 +215,7 @@ all tissues, using Pearson signature automatically.")
     }
     ## end: process tissue and signature argument
 
-    if(exprtype=="count"){
+    if(exprtype=="counts"){
         exprdata = count2FPKM(exprdata, genelength = genelength,
             idtype = idtype)
     }

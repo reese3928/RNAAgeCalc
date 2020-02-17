@@ -3,13 +3,13 @@
 \docType{data}
 \name{rawcount}
 \alias{rawcount}
-\title{An example of RNASeq count data}
-\format{A data frame which contains the RNASeq count data. Each row is a 
+\title{An example of RNASeq counts data}
+\format{A data frame which contains the RNASeq counts data. Each row is a 
 gene and each column is a sample}
 \usage{
 rawcount
 }
 \description{
-An example of RNASeq count data
+An example of RNASeq counts data
 }
 \keyword{datasets}

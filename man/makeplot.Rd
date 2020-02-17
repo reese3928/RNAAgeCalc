@@ -4,8 +4,12 @@
 \alias{makeplot}
 \title{Make plot to visualize RNA age}
 \usage{
-makeplot(res, main = "RNA age vs chronological age",
-  xlab = "chronological age", ylab = "RNA Age")
+makeplot(
+  res,
+  main = "RNA age vs chronological age",
+  xlab = "chronological age",
+  ylab = "RNA Age"
+)
 }
 \arguments{
 \item{res}{a data frame returned by `predict_age` function. If the

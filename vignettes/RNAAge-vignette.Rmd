@@ -25,7 +25,7 @@ To install and load RNAAgeCalc
 ```{r eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("RNAAgeCalc", version = "3.10")
+BiocManager::install("RNAAgeCalc")
 ```
 
 ```{r}
@@ -65,7 +65,7 @@ For the tissue-specific RNASeq age calculator, elastic net
 individual tissue. Chronological age was response variable whereas logarithm 
 transformed FPKM of genes were predictors. The across-tissue calculator was 
 constructed by first performing differential expression analysis on the 
-RNASeq count data for each individual tissue. To identify genes consistently 
+RNASeq counts data for each individual tissue. To identify genes consistently 
 differentially expressed across tissues, we adapted the binomial test 
 discussed in de Magalhaes et al. [@de2009meta] to find the genes with the 
 largest number of age-related signals. A detailed explanation can be found 
@@ -73,10 +73,18 @@ in our paper.
 
 ## Usage of RNASeq age calculator
 
-The main function to calculate RNASeq age is `predict_age`. This section 
-explains each argument in `predict_age` function. 
+The main functions to calculate RNASeq age are `predict_age` and 
+`predict_age_fromse`. Users can use either of them. `predict_age` function 
+takes data frame as input whereas `predict_age_fromse` function takes 
+[SummarizedExperiment](https://bioconductor.org/packages/SummarizedExperiment) 
+as input. Both functions work in the same way internally. In this section, 
+we explain the arguments in `predict_age` and `predict_age_fromse` 
+respectively. 
 
-### exprdata
+### Options in predict_age function
+
+#### exprdata
+
 `exprdata` is a matrix or data frame which contains gene expression data
 with each row represents a gene and each column represents a sample. Users are 
 expected to use the argument `exprtype` to specify raw count or FPKM 
@@ -88,7 +96,7 @@ data(fpkmExample)
 head(fpkm)
 ```
 
-### tissue
+#### tissue
 `tissue` is a string indicates which tissue the gene expression data is
 obtained from. Users are expected to provide one of the following tissues.
 If the tissue argument is not provide or the provided tissue is not in this 
@@ -122,8 +130,8 @@ RNA age.
 * uterus       
 * vagina       
 
-### exprtype
-`exprtype` is either "count" or "FPKM". If `exprtype` is count, the 
+#### exprtype
+`exprtype` is either "counts" or "FPKM". If `exprtype` is counts, the 
 expression data will be converted to FPKM by `count2FPKM` automatically and 
 the calculator will be applied on FPKM data. When calculating FPKM, by default 
 gene length is obtained from the package's internal database. The internal 
@@ -131,7 +139,7 @@ gene length information was obtained from recount2. However, users are able
 to provide their own gene length information by using `genelength` argument 
 (see below).
 
-### idtype
+#### idtype
 `idtype` is a string which indicates the gene id type in `exprdata`. Default 
 is "SYMBOL". The following id types are supported.  
 
@@ -140,7 +148,7 @@ is "SYMBOL". The following id types are supported.
 * ENTREZID    
 * REFSEQ    
 
-### stype
+#### stype
 `stype` is a string which specifies which version of pre-trained calculators 
 to be used. Two versions are provided. If `stype="all"`, the calculator 
 trained on samples from all races (American Indian/Alaska Native, Asian, 
@@ -152,7 +160,7 @@ calculator. The race specific calculator for American Indian/Alaska Native,
 Asian, or Black/African American are not provided due to the small sample 
 size in GTEx data.
 
-### signature
+#### signature
 `signature` is a string which indicate the age signature to use when 
 calculating RNA age. This argument is not required. 
 
@@ -195,16 +203,16 @@ imputation will be made automatically by the `impute.knn` function in
 Bioconductor package 
 [impute](https://www.bioconductor.org/packages/release/bioc/html/impute.html).
 
-### genelength
+#### genelength
 `genelength` is a vector of gene length in bp. The size of `genelength` should 
 be equal to the number of rows in `exprdata`. This argument is optional. 
 When using `exprtype = "FPKM"`, `genelength` argument is ignored. When using
-`exprtype = "count"`, the raw count will be converted to FPKM. If `genelength` 
+`exprtype = "counts"`, the raw count will be converted to FPKM. If `genelength` 
 is provided, the function will convert raw count to FPKM based on the 
 user-supplied gene length. Otherwise, gene length is obtained from the 
 internal database.
 
-### chronage
+#### chronage
 `chronage` is a data frame which contains the chronological age of each
 sample. This argument is optional. 
 
@@ -223,7 +231,7 @@ If this argument is not provided, the age acceleration residual will not be
 calculated. 
 
 
-## Example
+#### Example
 ```{r message = TRUE}
 chronage = data.frame(sampleid = colnames(fpkm), age = c(30,50))
 res = predict_age(exprdata = fpkm, tissue = "brain", exprtype = "FPKM", 
@@ -248,6 +256,40 @@ chronage2 = data.frame(sampleid = colnames(fpkm_large), age = 31:62)
 res2 = predict_age(exprdata = fpkm_large, exprtype = "FPKM",
                   chronage = chronage2)
 head(res2)
+```
+
+
+### Options in predict_age_fromse function
+
+The main difference between `predict_age_fromse` and `predict_age` is that 
+`predict_age_fromse` takes SummarizedExperiment as input. The `se` argument
+is a SummarizedExperiment object. 
+
+* The `assays(se)` should contain gene expression data. The name of 
+`assays(se)` should be either "FPKM" or "counts". Use `exprtype` argument to 
+specify the type of gene expression data provided. 
+* Users are able to provide the chronological age of samples using 
+`colData(se)`. This is optional. If provided, the column name for chronological 
+age in `colData(se)` should be "age". If some samples' chronological age are 
+not available, users are expected to set the chronological age in `colData(se)` 
+to NA. If chronological age is not provided, the age acceleration residual will 
+not be calculated. 
+* Users are able to provide their own gene length using `rowData(se)`. This is 
+also optional. If using `exprtype = "FPKM"`, the provided gene length will be 
+ignored. If provided, the column name for gene length in `rowData(se)` should 
+be "bp_length". The function will convert raw count to FPKM by the 
+user-supplied gene length. Otherwise, gene length is obtained from the internal 
+database. 
+* The other arguments `tissue`, `exprtype`, `idtype`, `stype`, `signature` are
+exactly the same as described in `predict_age` function.
+
+#### Example
+```{r message = FALSE}
+library(SummarizedExperiment)
+colData = data.frame(age = c(40, 50))
+se = SummarizedExperiment(assays=list(FPKM=fpkm), colData=colData)
+res3 = predict_age_fromse(se = se, exprtype = "FPKM")
+head(res3)
 ```
 
 ## Visualization

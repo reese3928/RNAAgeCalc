@@ -1,7 +1,7 @@
 Package: RNAAgeCalc
 Type: Package
 Title: A multi-tissue transcriptional age calculator
-Version: 0.99.1
+Version: 0.99.2
 Authors@R: c(
     person("Xu", "Ren", 
         email = "xuren2120@gmail.com", role = c("aut", "cre")),
@@ -22,13 +22,15 @@ Imports:
     impute,
     AnnotationDbi,
     org.Hs.eg.db,
-    stats
+    stats,
+    SummarizedExperiment,
+    methods
 Depends:
-    R (>= 3.5)
+    R (>= 4.0)
 Suggests:
     knitr,
     rmarkdown,
     testthat
-RoxygenNote: 6.1.0
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
 biocViews: RNASeq,GeneExpression

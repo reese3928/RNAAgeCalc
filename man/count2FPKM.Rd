@@ -7,7 +7,7 @@
 count2FPKM(rawcount, genelength = NULL, idtype = "SYMBOL")
 }
 \arguments{
-\item{rawcount}{a matrix or data frame which contains gene expression count
+\item{rawcount}{a matrix or data frame which contains gene expression counts
 data.}
 
 \item{genelength}{gene length in bp. The size of `genelength` should be

@@ -3,7 +3,7 @@
 #' @description This function converts gene expression data from raw count to
 #' FPKM.
 #'
-#' @param rawcount a matrix or data frame which contains gene expression count
+#' @param rawcount a matrix or data frame which contains gene expression counts
 #' data.
 #' @param genelength gene length in bp. The size of `genelength` should be
 #' equal to the number of rows in `rawcount`. This argument is optional. If
