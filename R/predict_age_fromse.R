@@ -81,6 +81,8 @@
 #'   \item Peters
 #'   \item all
 #' }
+#' @param maxp the maxp argument used in \code{\link[impute]{impute.knn}} 
+#' function. This is optional. 
 #' @return a data frame contains RNA age.
 #' @importFrom SummarizedExperiment assayNames assay colData rowData
 #' @importFrom methods is
@@ -93,14 +95,15 @@
 #' colData=colData)
 #' res = predict_age_fromse(se = se, exprtype = "FPKM")
 
-predict_age_fromse <- function(se, tissue, exprtype = "FPKM", idtype = "SYMBOL",
-                        stype = "all", signature = NULL){
+predict_age_fromse <- function(se, tissue, exprtype = c("FPKM", "counts"), 
+    idtype = c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"),
+    stype = c("all", "caucasian"), signature = NULL, maxp = NULL){
     
     if (!is(se, "SummarizedExperiment")) {
         stop("se should be a SummarizedExperiment object. ")
     }
     
-    exprtype = match.arg(exprtype, c("counts", "FPKM"))
+    exprtype = match.arg(exprtype)
     ind = which(toupper(assayNames(se))==toupper(exprtype))
     if(length(ind)==0){
         stop("The assay name should contain ", exprtype)
@@ -128,12 +131,14 @@ predict_age_fromse <- function(se, tissue, exprtype = "FPKM", idtype = "SYMBOL",
     if(missing(tissue)){
         res = predict_age(exprdata, exprtype = exprtype, idtype = idtype,
                           stype = stype, signature = signature, 
-                          genelength = genelength, chronage = chronage)
+                          genelength = genelength, chronage = chronage, 
+                          maxp = maxp)
     }else{
         res = predict_age(exprdata, tissue = tissue, 
                           exprtype = exprtype, idtype = idtype,
                           stype = stype, signature = signature, 
-                          genelength = genelength, chronage = chronage)
+                          genelength = genelength, chronage = chronage,
+                          maxp = maxp)
     }
     
     res

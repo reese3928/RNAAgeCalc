@@ -1,7 +1,7 @@
 
 #' @title Converting gene expression data from raw count to FPKM
 #' @description This function converts gene expression data from raw count to
-#' FPKM.
+#' FPKM by using \code{\link[recount]{getRPKM}} 
 #'
 #' @param rawcount a matrix or data frame which contains gene expression counts
 #' data.
@@ -14,9 +14,13 @@
 #' @export
 #' @import org.Hs.eg.db
 #' @importFrom AnnotationDbi select
+#' @importFrom recount getRPKM
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @return a data frame contains FPKM.
 #' @references Carlson M (2019). org.Hs.eg.db: Genome wide annotation for
 #' Human. R package version 3.8.2.
+#' @references Collado-Torres, Leonardo, et al. "Reproducible RNA-seq analysis 
+#' using recount2." Nature biotechnology 35.4 (2017): 319-321.
 #' @examples
 #' data(countExample)
 #' head(rawcount)
@@ -42,7 +46,7 @@ count2FPKM = function(rawcount, genelength = NULL, idtype = "SYMBOL"){
         }else{
             genelength = lengthDB[rownames(rawcount), "bp_length"]
         }
-
+        
     }else{
         stopifnot(is.vector(genelength))
         stopifnot(is.numeric(genelength))
@@ -54,18 +58,15 @@ count2FPKM = function(rawcount, genelength = NULL, idtype = "SYMBOL"){
 of rows in rawcount.")
         }
     }
-
+    
     if(any(is.na(genelength))){
         warning("Can't find gene length for ",
                 round(sum(is.na(genelength))/nrow(rawcount)*100,4),
                 "% genes when converting raw count to FPKM.")
     }
 
-    countSum = colSums(rawcount)
-    bg = matrix(countSum, ncol = ncol(rawcount),
-        nrow = nrow(rawcount), byrow = TRUE)
-    wid = matrix(genelength, nrow = nrow(rawcount),
-        ncol = ncol(rawcount), byrow = FALSE)
-    data.frame(rawcount / (wid/1000) / (bg/1e6))
-
+    rowData = data.frame(bp_length = genelength)
+    se = SummarizedExperiment(assays=list(counts=rawcount), rowData=rowData)
+    df = data.frame(getRPKM(se))
+    df
 }

@@ -23,7 +23,7 @@ a data frame contains FPKM.
 }
 \description{
 This function converts gene expression data from raw count to
-FPKM.
+FPKM by using \code{\link[recount]{getRPKM}}
 }
 \examples{
 data(countExample)
@@ -34,4 +34,7 @@ head(fpkm)
 \references{
 Carlson M (2019). org.Hs.eg.db: Genome wide annotation for
 Human. R package version 3.8.2.
+
+Collado-Torres, Leonardo, et al. "Reproducible RNA-seq analysis 
+using recount2." Nature biotechnology 35.4 (2017): 319-321.
 }

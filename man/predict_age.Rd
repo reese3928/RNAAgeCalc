@@ -7,12 +7,13 @@
 predict_age(
   exprdata,
   tissue,
-  exprtype = "FPKM",
-  idtype = "SYMBOL",
-  stype = "all",
+  exprtype = c("FPKM", "counts"),
+  idtype = c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"),
+  stype = c("all", "caucasian"),
   signature = NULL,
   genelength = NULL,
-  chronage = NULL
+  chronage = NULL,
+  maxp = NULL
 )
 }
 \arguments{
@@ -110,6 +111,9 @@ contains more than 2 columns, only the first 2 columns will be considered.
 If this argument is not provided, the age acceleration residual will not be
 calculated. See package vignette for the definition of age acceleration
 residual.}
+
+\item{maxp}{the maxp argument used in \code{\link[impute]{impute.knn}} 
+function. This is optional.}
 }
 \value{
 a data frame contains RNA age.

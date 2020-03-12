@@ -32,6 +32,9 @@ test_that("Test invalid input", {
     expect_error(predict_age(exprdata = fpkm, exprtype = "FPKM", 
                              stype = "unknown"))
     
+    expect_error(predict_age(exprdata = fpkm, exprtype = "FPKM", 
+                             maxp = "unknown"))
+    
     se1 = 1
     expect_error(predict_age_fromse(se = se1, exprtype = "FPKM"))
     
@@ -64,6 +67,9 @@ test_that("Test invalid input", {
     
     expect_error(predict_age_fromse(se = se5, exprtype = "FPKM", 
                                     stype = "unknown"))
+    
+    expect_error(predict_age_fromse(se = se5, exprtype = "FPKM", 
+                                    maxp = "unknown"))
     
     res1 = predict_age(exprdata = fpkm, tissue = "brain", signature = "GTExAge", 
                        chronage = data.frame(sampleid = colnames(fpkm), 

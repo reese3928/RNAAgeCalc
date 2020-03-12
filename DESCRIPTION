@@ -1,7 +1,7 @@
 Package: RNAAgeCalc
 Type: Package
 Title: A multi-tissue transcriptional age calculator
-Version: 0.99.2
+Version: 0.99.3
 Authors@R: c(
     person("Xu", "Ren", 
         email = "xuren2120@gmail.com", role = c("aut", "cre")),
@@ -16,9 +16,12 @@ Description: It has been shown that both DNA methylation and RNA transcription
     The aim of this package is to provide a tool for across-tissue and 
     tissue-specific transcriptional age calculation based on GTEx RNASeq data.
 License: GPL-2
+URL: https://github.com/reese3928/RNAAgeCalc
+BugReports: https://github.com/reese3928/RNAAgeCalc/issues
 Encoding: UTF-8
 Imports:
     ggplot2,
+    recount,
     impute,
     AnnotationDbi,
     org.Hs.eg.db,

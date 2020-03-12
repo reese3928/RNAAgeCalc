@@ -89,6 +89,8 @@
 #' If this argument is not provided, the age acceleration residual will not be
 #' calculated. See package vignette for the definition of age acceleration
 #' residual.
+#' @param maxp the maxp argument used in \code{\link[impute]{impute.knn}} 
+#' function. This is optional. 
 #' @importFrom stats lm na.omit residuals
 #' @importFrom impute impute.knn
 #' @return a data frame contains RNA age.
@@ -98,8 +100,10 @@
 #' res = predict_age(exprdata = fpkm, exprtype = "FPKM")
 
 
-predict_age <- function(exprdata, tissue, exprtype = "FPKM", idtype = "SYMBOL",
-    stype = "all", signature = NULL, genelength = NULL, chronage = NULL){
+predict_age <- function(exprdata, tissue, exprtype = c("FPKM","counts"), 
+    idtype = c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"),
+    stype = c("all", "caucasian"), signature = NULL, genelength = NULL, 
+    chronage = NULL, maxp = NULL){
 
     ## check input:
     stopifnot(is.matrix(exprdata)|is.data.frame(exprdata))
@@ -129,10 +133,9 @@ predict_age <- function(exprdata, tissue, exprtype = "FPKM", idtype = "SYMBOL",
         stop("Duplicated gene names found in the exprdata matrix.")
     }
 
-    exprtype = match.arg(exprtype, c("counts", "FPKM"))
-    idtype = match.arg(toupper(idtype),
-        c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
-    stype = match.arg(tolower(stype), c("all", "caucasian"))
+    exprtype = match.arg(exprtype)
+    idtype = match.arg(idtype)
+    stype = match.arg(stype)
 
     if(!is.null(chronage)){
         stopifnot(is.data.frame(chronage))
@@ -158,6 +161,14 @@ first 2 columns will be used.")
         }
     }
 
+    if(!is.null(maxp)){
+        stopifnot(is.numeric(maxp))
+        if(length(maxp) > 1){
+            message("maxp contains more than 1 element. Only the first one
+                    will be used.")
+            maxp = maxp[1]
+        }
+    }
     ## end check input
 
     ## process tissue and signature argument
@@ -243,35 +254,44 @@ all tissues, using Pearson signature automatically.")
     sig_in_expr = genes_required%in%rownames(exprdata)
     if(sum(!sig_in_expr)!=0){
         message(round(sum(!sig_in_expr)/length(genes_required)*100,4),
-"% genes in the gene signature are not included in the supplied
-gene expression.")
-
+                "% genes in the gene signature are not included in the supplied
+                gene expression.")
+        
         ## impute the gene expression in the log scale
         message("performing imputation...")
         tempmat = data.frame(matrix(NA, sum(!sig_in_expr), ncol(exprdata)))
         rownames(tempmat) = setdiff(genes_required, rownames(exprdata))
         colnames(tempmat) = colnames(exprdata)
-
+        
         exprdata_withNA = rbind(exprdata, tempmat)
         exprdata_log = log2(exprdata_withNA + 1)
         exprdata_log = as.matrix(exprdata_log)
-        tmp = suppressWarnings(impute.knn(exprdata_log))
+        
+        if(is.null(maxp)){
+            maxp = nrow(exprdata_log)
+        }
+        tmp = suppressWarnings(impute.knn(exprdata_log, maxp=maxp))
         exprdata_log_impute = data.frame(tmp$data)
         exprdata_sub = t(exprdata_log_impute[genes_required,])
-
+        
     }else{
         ##  check partial row NA, then applied pre-trained calculator
-        if(any(is.na(exprdata))){
+        if(any(is.na(exprdata[genes_required,]))){
+            message("performing imputation...")
             exprdata_log = log2(exprdata + 1)
             exprdata_log = as.matrix(exprdata_log)
-            tmp = suppressWarnings(impute.knn(exprdata_log))
+            
+            if(is.null(maxp)){
+                maxp = nrow(exprdata_log)
+            }
+            tmp = suppressWarnings(impute.knn(exprdata_log, maxp=maxp))
             exprdata_log_impute = data.frame(tmp$data)
             exprdata_sub = t(exprdata_log_impute[genes_required,])
         }else{
             exprdata_sub = t(log2(exprdata[genes_required,] + 1))
         }
     }
-
+    
     ## make prediction using pre-trained calculator
     if(stype=="all"){
         coefs = genelist_all[[tissue]][[signature]]

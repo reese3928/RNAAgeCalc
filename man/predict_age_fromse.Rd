@@ -7,10 +7,11 @@
 predict_age_fromse(
   se,
   tissue,
-  exprtype = "FPKM",
-  idtype = "SYMBOL",
-  stype = "all",
-  signature = NULL
+  exprtype = c("FPKM", "counts"),
+  idtype = c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"),
+  stype = c("all", "caucasian"),
+  signature = NULL,
+  maxp = NULL
 )
 }
 \arguments{
@@ -98,6 +99,9 @@ signatures is given in the package vignette.
   \item Peters
   \item all
 }}
+
+\item{maxp}{the maxp argument used in \code{\link[impute]{impute.knn}} 
+function. This is optional.}
 }
 \value{
 a data frame contains RNA age.
