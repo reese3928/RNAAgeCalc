@@ -1,7 +1,7 @@
 Package: RNAAgeCalc
 Type: Package
 Title: A multi-tissue transcriptional age calculator
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(
     person("Xu", "Ren", 
         email = "xuren2120@gmail.com", role = c("aut", "cre")),
