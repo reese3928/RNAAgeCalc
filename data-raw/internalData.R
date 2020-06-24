@@ -19,6 +19,7 @@ lengthDB = data.frame(lengthDB)
 
 
 library(glmnet)
+library(devtools)
 tissues = c("adipose_tissue", "adrenal_gland", "blood", "blood_vessel", "brain",
             "breast", "colon", "esophagus", "heart", "liver", "lung", "muscle",
             "nerve", "ovary", "pancreas", "pituitary", "prostate",
@@ -51,6 +52,7 @@ for(sig in signatures[-1]){
     genelist_all[["all_tissues"]][[sig]] = coefs[which(coefs!=0)]
 }
 
+for(t in tissues) names(genelist_all[[t]])[1] = "DESeq2"
 
 dir2 = "/Users/renxu/Desktop/Rpackage/RNAAgeData/Caucasian"
 for(t in tissues){
@@ -68,8 +70,10 @@ for(sig in signatures[-1]){
     genelist_cau[["all_tissues"]][[sig]] = coefs[which(coefs!=0)]
 }
 
-devtools::use_data(lengthDB, genelist_all, genelist_cau, internal = TRUE,
-                   compress = "xz", overwrite = TRUE)
+for(t in tissues) names(genelist_cau[[t]])[1] = "DESeq2"
+
+use_data(lengthDB, genelist_all, genelist_cau, internal = TRUE, 
+         compress = "xz", overwrite = TRUE)
 
 
 ## some tests

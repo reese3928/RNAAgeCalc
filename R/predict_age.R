@@ -61,7 +61,7 @@
 #' following signatures. A detailed description of the meaning of these
 #' signatures is given in the package vignette.
 #' \itemize{
-#'   \item DESeq
+#'   \item DESeq2
 #'   \item Pearson
 #'   \item Dev
 #'   \item deMagalhaes
@@ -181,10 +181,13 @@ by all tissues automatically.")
 automatically.")
             signature = "GTExAge"
         }else{
-            signature = match.arg(signature, c("DESeq", "Pearson", "Dev",
-                "deMagalhaes", "GenAge", "GTExAge", "Peters", "all"))
+            signature = match.arg(signature, c("DESeq", "DESeq2", "Pearson", 
+                "Dev", "deMagalhaes", "GenAge", "GTExAge", "Peters", "all"))
             if(signature=="DESeq"){
-                message("DESeq signature is currently not available for
+                signature = "DESeq2"  ## replace "DESeq" with "DESeq2"
+            }
+            if(signature=="DESeq2"){
+                message("DESeq2 signature is currently not available for
 all tissues, using Pearson signature automatically.")
                 signature = "Pearson"
             }
@@ -196,12 +199,16 @@ all tissues, using Pearson signature automatically.")
         if( tolower(tissue) %in% names(genelist_all)){
             tissue = tolower(tissue)
             if(is.null(signature)){
-                message("signature is not provided, using DESeq signature
+                message("signature is not provided, using DESeq2 signature
 automatically.")
-                signature = "DESeq"
+                signature = "DESeq2"
             }else{
-                signature = match.arg(signature, c("DESeq", "Pearson", "Dev",
-                    "deMagalhaes", "GenAge", "GTExAge", "Peters", "all"))
+                signature = match.arg(signature, c("DESeq", "DESeq2", 
+                    "Pearson", "Dev", "deMagalhaes", "GenAge", "GTExAge", 
+                    "Peters", "all"))
+                if(signature=="DESeq"){
+                    signature = "DESeq2"  ## replace "DESeq" with "DESeq2"
+                }
             }
         }else{
             message("the provided tissue was not found, using the RNA age
@@ -212,10 +219,14 @@ predictor trained by all tissues automatically.")
 automatically.")
                 signature = "GTExAge"
             }else{
-                signature = match.arg(signature, c("DESeq", "Pearson", "Dev",
-                    "deMagalhaes", "GenAge", "GTExAge", "Peters", "all"))
+                signature = match.arg(signature, c("DESeq", "DESeq2", 
+                    "Pearson", "Dev", "deMagalhaes", "GenAge", "GTExAge", 
+                    "Peters", "all"))
                 if(signature=="DESeq"){
-                    message("DESeq signature is currently not available for
+                    signature = "DESeq2"  ## replace "DESeq" with "DESeq2"
+                }
+                if(signature=="DESeq2"){
+                    message("DESeq2 signature is currently not available for
 all tissues, using Pearson signature automatically.")
                     signature = "Pearson"
                 }

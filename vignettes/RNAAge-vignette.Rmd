@@ -71,6 +71,15 @@ discussed in de Magalhaes et al. [@de2009meta] to find the genes with the
 largest number of age-related signals. A detailed explanation can be found 
 in our paper.
 
+The package is implemented as follows. For each tissue, signature and 
+sample type (see below for the descriptions), we pre-trained the calculator 
+using elastic net based on the GTEx samples. We saved the pre-trained model 
+coefficients as internal data in the package. The package takes gene 
+expression data as input and then match the input genes to the genes in the 
+internal data. This matching process is automatic so that the users just 
+need to provide gene expression data without having to pull out the 
+internal coefficients.
+
 ## Usage of RNASeq age calculator
 
 The main functions to calculate RNASeq age are `predict_age` and 

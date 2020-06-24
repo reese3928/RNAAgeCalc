@@ -72,7 +72,7 @@
 #' following signatures. A detailed description of the meaning of these
 #' signatures is given in the package vignette.
 #' \itemize{
-#'   \item DESeq
+#'   \item DESeq2
 #'   \item Pearson
 #'   \item Dev
 #'   \item deMagalhaes

@@ -105,28 +105,49 @@ test_that("Test tissue, signature, idtype, and chronage arguments", {
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         signature = "unknown"))
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
+        signature = "DESeq2"),NA)
+    expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         signature = "DESeq"),NA)
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "brain"),NA)
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "brain", signature = "unknown"))
     
+    temp1 = predict_age(exprdata = fpkm, idtype = "SYMBOL",
+        signature = "DESeq2")
+    temp2 = predict_age(exprdata = fpkm, idtype = "SYMBOL",
+        signature = "DESeq")
+    expect_identical(temp1, temp2)
+    
     expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
                                     signature = "unknown"))
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+                                    signature = "DESeq2"),NA)
     expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
                                     signature = "DESeq"),NA)
     expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
                                     tissue = "brain"),NA)
     expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL", 
                                     tissue = "brain", signature = "unknown"))
+    
+    temp1 = predict_age_fromse(se = se1, idtype = "SYMBOL", 
+        signature = "DESeq2")
+    temp2 = predict_age_fromse(se = se1, idtype = "SYMBOL", 
+        signature = "DESeq")
+    expect_identical(temp1, temp2)
+    
 
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "unknown", signature = "unknown"))
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
+        tissue = "unknown", signature = "DESeq2"), NA)
+    expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "unknown", signature = "DESeq"), NA)
     
     expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
-                                tissue = "unknown", signature = "DESeq"), NA)
+        tissue = "unknown", signature = "DESeq2"), NA)
+    expect_error(predict_age_fromse(se = se1, idtype = "SYMBOL",
+        tissue = "unknown", signature = "DESeq"), NA)
 
     expect_error(predict_age(exprdata = fpkm, idtype = "SYMBOL",
         tissue = "breast"),NA)
@@ -187,7 +208,7 @@ test_that("Test tissue, signature, idtype, and chronage arguments", {
 
     ## check for imputation
     tissue = "brain"
-    signature = "DESeq"
+    signature = "DESeq2"
     genes_required = names(genelist_all[[tissue]][[signature]])[-1]
     fpkm2 = fpkm
     fpkm2 = fpkm2[which(!rownames(fpkm2)%in%genes_required[c(1,10,20,30)]),]
