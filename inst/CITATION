@@ -1,0 +1,13 @@
+citEntry(entry="article",
+         title = "RNAAgeCalc: A multi-tissue transcriptional age calculators",
+         author = personList(as.person("Xu Ren"), as.person("Pei Fen Kuan")),
+         year = 2020,
+         journal = "PLOS ONE",
+         doi = "10.1371/journal.pone.0237006",
+         volume = 15,
+         number = 8,
+         pages = 1-21,
+         textVersion = "Ren, X., & Kuan, P. F. (2020). RNAAgeCalc: A 
+         multi-tissue transcriptional age calculator. PloS one, 15(8), 
+         e0237006. https://doi.org/10.1371/journal.pone.0237006")
+         
